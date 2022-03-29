@@ -6,7 +6,7 @@
 Welcome to ncas-aws-10's documentation!
 =======================================
 
-.. note::
+.. warning::
 
    This documentation is for the development code, and so may not be complete or suitable for use. Please switch versions to latest, stable, or a defined version.
 
