@@ -13,7 +13,7 @@ Welcome to ncas-aws-10's documentation!
 
    api.rst
 
-
+.. include:: _sidebar.rst.inc
 
 Indices and tables
 ==================
