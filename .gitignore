@@ -3,6 +3,7 @@ docs/build
 docs/source/generated
 **/.ipynb_checkpoints
 
+*.nc
 
 # For projects using Nanoc (http://nanoc.ws/)
 
