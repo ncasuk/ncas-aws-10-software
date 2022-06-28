@@ -1,5 +1,6 @@
 import pandas as pd
 import csv
+import re
 
 
 def aws_to_csv(infile):
@@ -23,37 +24,40 @@ def aws_to_csv(infile):
     with open(infile, 'r') as f:
         indata = csv.reader(f)
         for line in indata:
-            out ={'Timestamp':line[0]}
-            #discard line[1], it's just a start-of-data indicator
-            for datum in line[2:]:
-                details = datum.split('=')
-                #values are suffixed with a single character unit
-                #check unit is right
-                if details[1][-1] == units[fields.index(details[0])]:
-                    # correct units
-                    pass
-                elif details[0] in ['Timestamp', 'Id']:
-                    # these are unitless
-                    pass
-                elif details[0] in ['Vh']:
-                    # this is awkward, and I don't really care
-                    pass
-                else:
-                    # one day put together some sort of conversion
-                    print(f'Incorrect unit {details[1][-1]} for field {details[0]}')
-                if details[0] == 'Ta':
-                    # Convert to K
-                    if details[1][-1] == 'C':
-                        out[details[0]] = float(details[1][:-1]) + 273.15
-                    elif details[1]-[-1] == 'F':
-                        out[details[0]] = (float(details[1][:-1]) + 459.67) * (5/9)
+            if re.fullmatch(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d*){0,1}", line[0]):
+                out ={'Timestamp':line[0]}
+                #discard line[1], it's just a start-of-data indicator
+                for datum in line[2:]:
+                    details = datum.split('=')
+                    #values are suffixed with a single character unit
+                    #check unit is right
+                    if details[1][-1] == units[fields.index(details[0])]:
+                        # correct units
+                        pass
+                    elif details[0] in ['Timestamp', 'Id']:
+                        # these are unitless
+                        pass
+                    elif details[0] in ['Vh']:
+                        # this is awkward, and I don't really care
+                        pass
                     else:
-                        print(f'Very unexpected unit for Air Temp: {details[1][-1]}')
-                else:
-                    out[details[0]] = details[1][:-1]
-                if details[0] == 'Id':
-                    out[details[0]] = details[1]
-            data.append(out)
+                        # one day put together some sort of conversion
+                        print(f'Incorrect unit {details[1][-1]} for field {details[0]}')
+                    if details[0] == 'Ta':
+                        # Convert to K
+                        if details[1][-1] == 'C':
+                            out[details[0]] = float(details[1][:-1]) + 273.15
+                        elif details[1]-[-1] == 'F':
+                            out[details[0]] = (float(details[1][:-1]) + 459.67) * (5/9)
+                        else:
+                            print(f'Very unexpected unit for Air Temp: {details[1][-1]}')
+                    else:
+                        out[details[0]] = details[1][:-1]
+                    if details[0] == 'Id':
+                        out[details[0]] = details[1]
+                data.append(out)
+            else:
+                print(f'Unexpected timestamp format: {line[0]}')
             
     return pd.DataFrame(data)
     
