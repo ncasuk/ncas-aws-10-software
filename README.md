@@ -12,6 +12,7 @@ Uses [ncas_amof_netcdf_template] submodule to create an empty netCDF file.
   * pandas
   * datetime
   * netCDF4
+  * requests (for ncas_amof_netcdf_template submodule)
 
 
 ## Installation
