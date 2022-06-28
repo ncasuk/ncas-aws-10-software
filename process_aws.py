@@ -2,6 +2,7 @@ import datetime as dt
 import numpy as np
 from netCDF4 import Dataset
 import csv
+import re
 
 import read_aws
 import basic_qc_aws
@@ -12,8 +13,13 @@ from ncas_amof_netcdf_template import create_netcdf, util, remove_empty_variable
     
 def get_data(aws_file):
     df = read_aws.aws_to_csv(aws_file)
-    dt_times = [dt.datetime.strptime(i, "%Y-%m-%dT%H:%M:%S.%f") for i in df['Timestamp']]
-    
+    dt_times = []
+    for i in df['Timestamp']:
+        if re.search(r"\.\d+", i):
+            dt_times.append(dt.datetime.strptime(i, "%Y-%m-%dT%H:%M:%S.%f"))
+        else:
+            dt_times.append(dt.datetime.strptime(i, "%Y-%m-%dT%H:%M:%S"))    
+ 
     air_pressure = np.array([float(i) for i in df['Pa']])
     air_temperature = np.array([float(i) for i in df['Ta']])
     relative_humidity = np.array([float(i) for i in df['Ua']])
