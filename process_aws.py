@@ -29,13 +29,16 @@ def get_data(aws_file):
 
 
 def make_netcdf_surface_met(aws_file, metadata_file = None, ncfile_location = '.', verbose = False):
+    if verbose: print('Getting data')
     dt_times, data = get_data(aws_file)
     qc_flags = basic_qc_aws.check_valid(data)
     unix_times, doy, years, months, days, hours, minutes, seconds, time_coverage_start_dt, time_coverage_end_dt, file_date = util.get_times(dt_times)
     
+    if verbose: print('Making netCDF file')
     create_netcdf.main('ncas-aws-10', date = file_date, dimension_lengths = {'time':len(dt_times)}, loc = 'land', products = ['surface-met'], file_location=ncfile_location)
     ncfile = Dataset(f'{ncfile_location}/ncas-aws-10_iao_{file_date}_surface-met_v1.0.nc', 'a')
     
+    if verbose: print('Adding variables')
     util.update_variable(ncfile, 'air_pressure', data['air_pressure'])
     util.update_variable(ncfile, 'air_temperature', data['air_temperature'])
     util.update_variable(ncfile, 'relative_humidity', data['relative_humidity'])
@@ -58,6 +61,7 @@ def make_netcdf_surface_met(aws_file, metadata_file = None, ncfile_location = '.
     for key, value in qc_flags.items():
         util.update_variable(ncfile, key, value)
     
+    if verbose: print('Adding global attributes')
     ncfile.setncattr('time_coverage_start', dt.datetime.fromtimestamp(time_coverage_start_dt, dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%S %Z"))
     ncfile.setncattr('time_coverage_end', dt.datetime.fromtimestamp(time_coverage_end_dt, dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%S %Z"))
     
@@ -74,9 +78,11 @@ def make_netcdf_surface_met(aws_file, metadata_file = None, ncfile_location = '.
     
     ncfile.close()
     
+    if verbose: print('Removing empty variables') 
     remove_empty_variables.main(f'{ncfile_location}/ncas-aws-10_iao_{file_date}_surface-met_v1.0.nc', verbose = verbose)
     
-    
+    if verbose: print('Complete')
+
     
 if __name__ == "__main__":
     import argparse
