@@ -60,6 +60,9 @@ Within `make_netcdf.sh`, the following may need adjusting:
 * `metadata_file="${SCRIPT_DIR}/../metadata.csv`: replace if using different metadata file.
 
 
+[scripts]: scripts
+
+
 ## Further Information
 * `read_aws.py` contains the code that actually reads the raw data. This is called from within `process_aws.py`
 * `basic_qc_aws.py` returns qc values based on the instrument's designed operating range. This is called from within `process_aws.py`
