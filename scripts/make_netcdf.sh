@@ -14,7 +14,7 @@ metadata_file=${SCRIPT_DIR}/../metadata.csv
 
 datadate=$1  # YYYYmmdd
 
-python ${SCRIPT_DIR}/../process_aws.py ${datapath}/${datadate}_vaisala.csv -m ${metadata_file} -o ${netcdf_path}
+python ${SCRIPT_DIR}/../process_aws.py ${datapath}/${datadate}_vaisala.csv -m ${metadata_file} -o ${netcdf_path} -v
 
 if [ -f ${netcdf_path}/ncas-aws-10_iao_${year}${month}${day}_surface-met_*.nc ]
 then 
