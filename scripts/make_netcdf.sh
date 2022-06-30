@@ -23,7 +23,7 @@ else
   aws_file_exists=False
 fi
 
-cat << EOF | sed -e 's/#.*//; s/  *$//' > ${logfilepath}/${year}${month}${day}.txt
+cat << EOF | sed -e 's/#.*//; s/  *$//' > ${logfilepath}/${datadate}.txt
 Date: $(date -u)
 AWS file created: ${aws_file_exists}
 EOF
