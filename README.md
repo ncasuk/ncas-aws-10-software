@@ -19,7 +19,7 @@ Uses [ncas_amof_netcdf_template] submodule to create an empty netCDF file.
 
 Clone the git repo and submodule
 ```
-git clone --recursive-submodules https://github.com/joshua-hampton/ncas-aws-10-software.git
+git clone --recurse-submodules https://github.com/ncasuk/ncas-aws-10-software.git
 ```
 
 If the `--recurse-submodules` flag is not included, the `ncas_amof_netcdf_template` repo will not also be cloned. To fix this, use the following commands in the top level of this repo:
