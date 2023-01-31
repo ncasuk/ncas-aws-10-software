@@ -15,9 +15,9 @@ Code for creating AMOF-compliant netCDF files for ncas-aws-10 instrument.
 
 ## Installation
 
-Clone the git repo and submodule
+Clone the git repo
 ```
-git clone --recurse-submodules https://github.com/ncasuk/ncas-aws-10-software.git
+git clone https://github.com/ncasuk/ncas-aws-10-software.git
 ```
 
 Install required modules using `pip install -r requirements.txt` or `conda install --file requirements.txt`
