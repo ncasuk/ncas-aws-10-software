@@ -6,13 +6,18 @@
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
-netcdf_path="/gws/nopw/j04/ncas_obs/iao/processing/ncas-aws-10/netcdf_files"
-datapath="/gws/nopw/j04/ncas_obs/iao/raw_data/ncas-aws-10/incoming"
-logfilepath="/home/users/earjham/logs/na10logs"
+gws_path=/gws/pw/j07/ncas_obs_vol1
+
+netcdf_path=${gws_path}/iao/processing/ncas-aws-10/netcdf_files
+datapath=${gws_path}/iao/raw_data/ncas-aws-10/incoming
+logfilepath=${gws_path}/iao/logs/ncas-aws-10
+
 metadata_file=${SCRIPT_DIR}/../metadata.csv
 
-
 datadate=$1  # YYYYmmdd
+conda_env=${2:-netcdf}
+
+conda activate ${conda_env}
 
 python ${SCRIPT_DIR}/../process_aws.py ${datapath}/${datadate}_vaisala.csv -m ${metadata_file} -o ${netcdf_path} -v
 
