@@ -34,15 +34,23 @@ def get_data(aws_file):
 
 
 
-def make_netcdf_surface_met(aws_file, metadata_file = None, ncfile_location = '.', verbose = False):
+def make_netcdf_surface_met(aws_file, metadata_file = None, ncfile_location = '.', verbose = False, local_tsv_file_loc = None):
     if verbose: print('Getting data')
     dt_times, data = get_data(aws_file)
     qc_flags = basic_qc_aws.check_valid(data)
     unix_times, doy, years, months, days, hours, minutes, seconds, time_coverage_start_dt, time_coverage_end_dt, file_date = util.get_times(dt_times)
     
     if verbose: print('Making netCDF file')
-    create_netcdf.main('ncas-aws-10', date = file_date, dimension_lengths = {'time':len(dt_times)}, loc = 'land', products = ['surface-met'], file_location=ncfile_location)
-    ncfile = Dataset(f'{ncfile_location}/ncas-aws-10_iao_{file_date}_surface-met_v1.0.nc', 'a')
+    ncfile = create_netcdf.main(
+        'ncas-aws-10',
+        date = file_date,
+        dimension_lengths = {'time':len(dt_times)},
+        loc = 'land',
+        products = ['surface-met'],
+        file_location = ncfile_location,
+        return_open = True,
+        use_local_files = local_tsv_file_loc,
+    )
     
     if verbose: print('Adding variables')
     util.update_variable(ncfile, 'air_pressure', data['air_pressure'])
@@ -96,14 +104,15 @@ if __name__ == "__main__":
     parser.add_argument('input_file', type=str, help = 'Raw data from instrument.')
     parser.add_argument('-v','--verbose', action='store_true', help = 'Print out additional information.', dest = 'verbose')
     parser.add_argument('-m','--metadata', type = str, help = 'csv file with global attributes and additional metadata. Default is None', dest='metadata')
-    parser.add_argument('-o','--ncfile-location', type=str, help = 'Path for where to save netCDF file. Default is .', default = '.', dest="ncfile_location")
-    
+    parser.add_argument('-o','--ncfile-location', type = str, help = 'Path for where to save netCDF file. Default is .', default = '.', dest="ncfile_location")
+    parser.add_argument('-t','--tsv-location', type = str, help = "Path to local store of AMF_CVs tsv files for offline use. Default is None ('online' use).", default = None, dest = "tsv_location")
+
     # Only option actually available is surface-met, however code kept here for ease in case of future change
     #parser.add_argument('-p','--products', nargs = '*', help = 'Products of ncas-aws-10 to make netCDF files for. Options are surface-met. One or many can be given (space separated), default is "surface-met".', default = ['surface-met'])
     
     args = parser.parse_args()
     
-    make_netcdf_surface_met(args.input_file, metadata_file = args.metadata, ncfile_location = args.ncfile_location, verbose = args.verbose)
+    make_netcdf_surface_met(args.input_file, metadata_file = args.metadata, ncfile_location = args.ncfile_location, verbose = args.verbose, local_tsv_file_loc = args.tsv_location)
     
     # again, not needed now as only one product but kept here for future use
     
